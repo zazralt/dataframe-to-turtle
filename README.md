@@ -20,3 +20,56 @@ This package is currently not available on PyPI. To use it directly:
 ```bash
 git clone https://github.com/your-org/dataframe-to-turtle.git
 cd dataframe-to-turtle
+
+
+import pandas as pd
+from dataframe_to_turtle import convert_dataframe_to_turtle
+
+data = {
+    "name": ["Alice", "Bob"],
+    "age": [30, 25],
+    "knows": ["foaf:Bob", "foaf:Alice"]
+}
+df = pd.DataFrame(data, index=["Alice", "Bob"])
+
+config = {
+    "prefixes": {
+        "foaf": "http://xmlns.com/foaf/0.1/",
+        "schema": "http://schema.org/",
+        "xsd": "http://www.w3.org/2001/XMLSchema#"
+    },
+    "subject_prefix": "foaf",
+    "subject_classes": ["foaf:Person"],
+    "predicate_maps": {
+        "name": "foaf:name",
+        "age": "schema:age",
+        "knows": "foaf:knows"
+    },
+    "language_tags": {
+        "name": "en"
+    },
+    "data_types": {
+        "age": "xsd:integer"
+    },
+    "relations": ["knows"]
+}
+
+ttl_output = convert_dataframe_to_turtle(df, config)
+print(ttl_output)
+
+
+```
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+foaf:Alice a foaf:Person ;
+    foaf:name "Alice"@en ;
+    schema:age 30 ;
+    foaf:knows foaf:Bob .
+
+foaf:Bob a foaf:Person ;
+    foaf:name "Bob"@en ;
+    schema:age 25 ;
+    foaf:knows foaf:Alice .
+```
