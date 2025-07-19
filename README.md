@@ -1,3 +1,8 @@
+Here is a professional and structured `README.md` for the `dataframe-to-turtle` repository:
+
+---
+
+````markdown
 # dataframe-to-turtle
 
 **dataframe-to-turtle** is a lightweight Python utility for converting `pandas.DataFrame` objects into [RDF](https://www.w3.org/RDF/) serialized in [Turtle](https://www.w3.org/TR/turtle/) format. It allows you to define custom mappings for prefixes, RDF classes, predicates, datatypes, language tags, and object relations—enabling seamless transformation of tabular data into Linked Data.
@@ -20,8 +25,19 @@ This package is currently not available on PyPI. To use it directly:
 ```bash
 git clone https://github.com/your-org/dataframe-to-turtle.git
 cd dataframe-to-turtle
+````
 
+Install dependencies:
 
+```bash
+pip install pandas
+```
+
+---
+
+## Usage
+
+```python
 import pandas as pd
 from dataframe_to_turtle import convert_dataframe_to_turtle
 
@@ -56,9 +72,12 @@ config = {
 
 ttl_output = convert_dataframe_to_turtle(df, config)
 print(ttl_output)
+```
 
+---
 
 ## Output Example
+
 ```turtle
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <http://schema.org/> .
@@ -75,6 +94,8 @@ foaf:Bob a foaf:Person ;
     foaf:knows foaf:Alice .
 ```
 
+---
+
 ## Configuration Reference
 
 | Key               | Type              | Description                                           |
@@ -86,3 +107,11 @@ foaf:Bob a foaf:Person ;
 | `language_tags`   | `dict` (optional) | Assigns language tags to literal values               |
 | `data_types`      | `dict` (optional) | Explicit datatype URIs for column values              |
 | `relations`       | `list` (optional) | Columns treated as URI references instead of literals |
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
