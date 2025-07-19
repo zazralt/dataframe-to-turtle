@@ -58,6 +58,7 @@ ttl_output = convert_dataframe_to_turtle(df, config)
 print(ttl_output)
 
 
+## Output Example
 ```turtle
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <http://schema.org/> .
@@ -73,3 +74,15 @@ foaf:Bob a foaf:Person ;
     schema:age 25 ;
     foaf:knows foaf:Alice .
 ```
+
+## Configuration Reference
+
+| Key               | Type              | Description                                           |
+| ----------------- | ----------------- | ----------------------------------------------------- |
+| `prefixes`        | `dict`            | Mapping of prefix labels to URIs                      |
+| `subject_prefix`  | `str`             | Prefix to use for subject URIs                        |
+| `subject_classes` | `list[str]`       | RDF classes for each subject                          |
+| `predicate_maps`  | `dict`            | Maps DataFrame columns to RDF predicates              |
+| `language_tags`   | `dict` (optional) | Assigns language tags to literal values               |
+| `data_types`      | `dict` (optional) | Explicit datatype URIs for column values              |
+| `relations`       | `list` (optional) | Columns treated as URI references instead of literals |
