@@ -58,7 +58,7 @@ ttl_output = convert_dataframe_to_turtle(df, config)
 print(ttl_output)
 
 
-```
+```turtle
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
