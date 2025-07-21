@@ -55,7 +55,7 @@ config = {
         {
             "column": "age",
             "predicate": "schema:age",
-            "datatype": "xsd:integer"
+            "data_type": "xsd:integer"
         },
         {
             "column": "knows",
@@ -80,12 +80,12 @@ print(ttl_output)
 
 foaf:Alice a foaf:Person ;
     foaf:name "Alice"@en ;
-    schema:age 30 ;
+    schema:age "30"^^xsd:integer ;
     foaf:knows foaf:Bob .
 
 foaf:Bob a foaf:Person ;
     foaf:name "Bob"@en ;
-    schema:age 25 ;
+    schema:age "25"^^xsd:integer ;
     foaf:knows foaf:Alice .
 ```
 
