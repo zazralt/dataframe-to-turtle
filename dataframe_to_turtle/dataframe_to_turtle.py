@@ -14,12 +14,12 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 "prefixes": { "prefix": "uri", ... },
                 "subjects": {
                     "prefix": "prefix",
-                    "classes": ["prefix:class1", "prefix:class2"]
+                    "classes": ["prfx:class1", "prfx:class2"]
                 },
                 "mappings": [
                     {
-                        "column": "colname",
-                        "predicate": "prefix:property",
+                        "column": "column_name",
+                        "predicate": "prfx:property1",
                         "language": "en",        # optional
                         "datatype": "xsd:type",  # optional
                         "type": "relation"       # optional ("relation" = treat value as URI)
@@ -71,12 +71,12 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 object_str = f"\"{value}\"@{lang}"
             elif "datatype" in mapping:
                 dt = mapping["datatype"]
-                if dt == "xsd:integer" and isinstance(value, (int, float)):
+                object_str = f"\"{value}\"^^{dt}"
+            else:
+                if isinstance(value, (int, float)):
                     object_str = str(int(value))
                 else:
-                    object_str = f"\"{value}\"^^{dt}"
-            else:
-                object_str = f"\"{value}\""
+                    object_str = f"\"{value}\""
 
             predicate_lines.append(f"    {predicate} {object_str}")
 
