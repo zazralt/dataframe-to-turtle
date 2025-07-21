@@ -21,7 +21,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                         "column": "column_name",
                         "predicate": "prfx:property1",
                         "language": "en",        # optional
-                        "datatype": "xsd:type",  # optional
+                        "data_type": "xsd:type",  # optional
                         "type": "relation"       # optional ("relation" = treat value as URI)
                     },
                     ...
@@ -71,7 +71,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 lang = mapping["language"]
                 object_str = f"\"{value}\"@{lang}"
             elif "datatype" in mapping:
-                dt = mapping["datatype"]
+                dt = mapping["data_type"]
                 object_str = f"\"{value}\"^^{dt}"
             else:
                 if isinstance(value, (int, float)):
