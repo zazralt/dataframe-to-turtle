@@ -115,6 +115,8 @@ You can use the `convert_file_to_turtle` function to read tabular data from a CS
 ### Function Signature
 
 ```python
+from dataframe_to_turtle import convert_dataframe_to_turtle, convert_file_to_turtle
+
 convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_col: str = None) -> None
 ````
 
