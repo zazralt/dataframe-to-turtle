@@ -22,7 +22,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                         "predicate": "prfx:property1",
                         "language": "en",         # optional
                         "data_type": "xsd:type",  # optional
-                        "prefix": "prefix"        # optional ("relation" = treat value as URI)
+                        "prefix": "prefix"        # optional (prefix for object_uri)
                     },
                     ...
                 ]
