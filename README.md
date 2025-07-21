@@ -42,20 +42,27 @@ config = {
         "schema": "http://schema.org/",
         "xsd": "http://www.w3.org/2001/XMLSchema#"
     },
-    "subject_prefix": "foaf",
-    "subject_classes": ["foaf:Person"],
-    "predicate_maps": {
-        "name": "foaf:name",
-        "age": "schema:age",
-        "knows": "foaf:knows"
+    "subjects": {
+        "uri_prefix": "foaf",
+        "classes": ["foaf:Person"]
     },
-    "language_tags": {
-        "name": "en"
-    },
-    "data_types": {
-        "age": "xsd:integer"
-    },
-    "relations": ["knows"]
+    "mappings": [
+        {
+            "column": "name",
+            "predicate": "foaf:name",
+            "language": "en"
+        },
+        {
+            "column": "age",
+            "predicate": "schema:age",
+            "datatype": "xsd:integer"
+        },
+        {
+            "column": "knows",
+            "predicate": "foaf:knows",
+            "type": "relation"
+        }
+    ]
 }
 
 ttl_output = convert_dataframe_to_turtle(df, config)
