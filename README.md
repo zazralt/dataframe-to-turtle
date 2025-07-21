@@ -1,7 +1,3 @@
-Here is a professional and structured `README.md` for the `dataframe-to-turtle` repository:
-
----
-
 ````markdown
 # dataframe-to-turtle
 
