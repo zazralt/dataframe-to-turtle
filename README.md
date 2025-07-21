@@ -18,8 +18,7 @@
 This package is currently not available on PyPI. To use it directly:
 
 ```bash
-git clone https://github.com/zazralt/dataframe-to-turtle.git
-cd dataframe-to-turtle
+pip install git+https://github.com/zazralt/dataframe-to-turtle.git
 ````
 
 Install dependencies:
