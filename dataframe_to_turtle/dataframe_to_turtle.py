@@ -20,9 +20,9 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                     {
                         "column": "column_name",
                         "predicate": "prfx:property1",
-                        "language": "en",        # optional
+                        "language": "en",         # optional
                         "data_type": "xsd:type",  # optional
-                        "type": "relation"       # optional ("relation" = treat value as URI)
+                        "prefix": "prefix"        # optional ("relation" = treat value as URI)
                     },
                     ...
                 ]
@@ -65,10 +65,10 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 continue
 
             # Format object
-            if "object_prefix" in mapping:
-                object_prefix = mapping.get("object_prefix")
-                subject_id = str(value).replace(' ', '')
-                object_str = f"{object_prefix}:{subject_id}"
+            if "prefix" in mapping:
+                object_prefix = mapping["prefix"]
+                object_id = str(value).replace(' ', '')
+                object_str = f"<{object_prefix}:{object_id}>"
             elif "language" in mapping:
                 lang = mapping["language"]
                 object_str = f"\"{value}\"@{lang}"
