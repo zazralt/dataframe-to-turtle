@@ -32,7 +32,7 @@ from dataframe_to_turtle import convert_dataframe_to_turtle
 data = {
     "name": ["Alice", "Bob"],
     "age": [30, 25],
-    "knows": ["foaf:Bob", "foaf:Alice"]
+    "knows": ["Bob", "Alice"]
 }
 df = pd.DataFrame(data, index=["Alice", "Bob"])
 
