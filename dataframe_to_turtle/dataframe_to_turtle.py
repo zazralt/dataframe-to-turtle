@@ -68,7 +68,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
             if "prefix" in mapping:
                 object_prefix = mapping["prefix"]
                 object_id = str(value).replace(' ', '')
-                object_str = f"<{object_prefix}:{object_id}>"
+                object_str = f"{object_prefix}:{object_id}"
             elif "language" in mapping:
                 lang = mapping["language"]
                 object_str = f"\"{value}\"@{lang}"
