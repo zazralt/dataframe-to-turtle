@@ -43,7 +43,7 @@ config = {
         "xsd": "http://www.w3.org/2001/XMLSchema#"
     },
     "subjects": {
-        "uri_prefix": "foaf",
+        "prefix": "foaf",
         "classes": ["foaf:Person"]
     },
     "mappings": [
