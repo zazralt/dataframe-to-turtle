@@ -18,7 +18,7 @@
 This package is currently not available on PyPI. To use it directly:
 
 ```bash
-git clone https://github.com/your-org/dataframe-to-turtle.git
+git clone https://github.com/zazralt/dataframe-to-turtle.git
 cd dataframe-to-turtle
 ````
 
