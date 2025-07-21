@@ -75,19 +75,20 @@ print(ttl_output)
 ## Output Example
 
 ```turtle
+@prefix ex: <http://example.com/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-foaf:Alice a foaf:Person ;
+ex:Alice a foaf:Person ;
     foaf:name "Alice"@en ;
     schema:age "30"^^xsd:integer ;
-    foaf:knows foaf:Bob .
+    foaf:knows ex:Bob .
 
-foaf:Bob a foaf:Person ;
+ex:Bob a foaf:Person ;
     foaf:name "Bob"@en ;
     schema:age "25"^^xsd:integer ;
-    foaf:knows foaf:Alice .
+    foaf:knows ex:Alice .
 ```
 
 ---
