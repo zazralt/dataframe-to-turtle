@@ -1,0 +1,29 @@
+[project]
+name = "dataframe-to-turtle"
+version = "0.1.0"
+description = "Convert pandas DataFrames or tabular files (CSV, Excel) into RDF Turtle format."
+readme = "README.md"
+authors = [
+    { name = "Zazralt Magic", email = "zazralt@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["rdf", "turtle", "pandas", "dataframe", "linked-data", "semantic-web"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries",
+    "Intended Audience :: Developers"
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=1.3.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/dataframe-to-turtle"
+Repository = "https://github.com/your-org/dataframe-to-turtle"
+Issues = "https://github.com/your-org/dataframe-to-turtle/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
