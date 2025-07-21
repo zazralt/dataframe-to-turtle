@@ -65,8 +65,10 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 continue
 
             # Format object
-            if mapping.get("type") == "relation":
-                object_str = str(value).replace(' ', '')
+            if "object_prefix" in mapping:
+                object_prefix = mapping.get("object_prefix")
+                subject_id = str(value).replace(' ', '')
+                object_str = f"{object_prefix}:{subject_id}"
             elif "language" in mapping:
                 lang = mapping["language"]
                 object_str = f"\"{value}\"@{lang}"
