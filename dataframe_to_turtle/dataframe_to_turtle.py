@@ -13,8 +13,8 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
             {
                 "prefixes": { "prefix": "uri", ... },
                 "subjects": {
-                    "uri_prefix": "prefix",
-                    "classes": ["class1", "class2"]
+                    "prefix": "prefix",
+                    "classes": ["prefix:class1", "prefix:class2"]
                 },
                 "mappings": [
                     {
@@ -32,7 +32,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         str: RDF Turtle serialization of the DataFrame.
     """
     prefixes = config["prefixes"]
-    subject_prefix = config["subjects"]["uri_prefix"]
+    subject_prefix = config["subjects"]["prefix"]
     subject_classes = config["subjects"]["classes"]
     mappings_list = config["mappings"]
 
