@@ -39,7 +39,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     # Pre-index column mappings for fast access
     valid_column_names = [m["column"] for m in mappings_list if m["column"] in dataframe.columns]
     mapping_index = {m["column"]: m for m in mappings_list if m["column"] in dataframe.columns}
-    missing = {m["column"]: m for m in mappings_list if m["column"] not in dataframe.columns}
+    missing = [m["column"] for m in mappings_list if m["column"] not in dataframe.columns]
     if missing:
         print(f"Warning: the following columns in config were not found in the DataFrame: {missing}")
 
