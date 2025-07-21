@@ -108,7 +108,7 @@ Here is a short `README.md` add-on section describing the `convert_file_to_turtl
 
 ---
 
-## 📄 Converting CSV or Excel Files to Turtle
+## Converting CSV or Excel Files to Turtle
 
 You can use the `convert_file_to_turtle` function to read tabular data from a CSV or Excel file, convert it to RDF Turtle, and write the result to a `.ttl` file.
 
