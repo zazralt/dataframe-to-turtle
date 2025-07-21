@@ -21,12 +21,6 @@ This package is currently not available on PyPI. To use it directly:
 pip install git+https://github.com/zazralt/dataframe-to-turtle.git
 ````
 
-Install dependencies:
-
-```bash
-pip install pandas
-```
-
 ---
 
 ## Usage
