@@ -37,7 +37,11 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     mappings_list = config["mappings"]
 
     # Pre-index column mappings for fast access
-    mapping_index = {m["column"]: m for m in mappings_list}
+    valid_column_names = [m["column"] for m in mappings_list if m["column"] in dataframe.columns]
+    mapping_index = {m["column"]: m for m in mappings_list if m["column"] in dataframe.columns}
+    missing = {m["column"]: m for m in mappings_list if m["column"] not in dataframe.columns}
+    if missing:
+        print(f"Warning: the following columns in config were not found in the DataFrame: {missing}")
 
     lines = []
 
@@ -52,10 +56,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
 
         predicate_lines = []
 
-        for column_name in dataframe.columns:
-            if column_name not in mapping_index:
-                continue
-
+        for column_name in valid_column_names:
             mapping = mapping_index[column_name]
             predicate = mapping["predicate"]
             value = row[column_name]
