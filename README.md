@@ -38,12 +38,13 @@ df = pd.DataFrame(data, index=["Alice", "Bob"])
 
 config = {
     "prefixes": {
+        "ex": "http://example.com/",
         "foaf": "http://xmlns.com/foaf/0.1/",
         "schema": "http://schema.org/",
         "xsd": "http://www.w3.org/2001/XMLSchema#"
     },
     "subjects": {
-        "prefix": "foaf",
+        "prefix": "ex",
         "classes": ["foaf:Person"]
     },
     "mappings": [
@@ -60,7 +61,7 @@ config = {
         {
             "column": "knows",
             "predicate": "foaf:knows",
-            "type": "relation"
+            "prefix": "ex"
         }
     ]
 }
