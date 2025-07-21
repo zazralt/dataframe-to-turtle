@@ -103,10 +103,37 @@ foaf:Bob a foaf:Person ;
 | `data_types`      | `dict` (optional) | Explicit datatype URIs for column values              |
 | `relations`       | `list` (optional) | Columns treated as URI references instead of literals |
 
----
 
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
+Here is a short `README.md` add-on section describing the `convert_file_to_turtle` function and how to use it:
 
 ---
+
+## 📄 Converting CSV or Excel Files to Turtle
+
+You can use the `convert_file_to_turtle` function to read tabular data from a CSV or Excel file, convert it to RDF Turtle, and write the result to a `.ttl` file.
+
+### Function Signature
+
+```python
+convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_col: str = None) -> None
+````
+
+### Parameters
+
+* **`input_path`**: Path to the source `.csv`, `.xls`, or `.xlsx` file.
+* **`config`**: RDF mapping configuration (same structure as for `convert_dataframe_to_turtle`).
+* **`output_path`**: Destination file path for Turtle output.
+* **`index_col`** *(optional)*: Name or integer index of the column to use as the RDF subject identifier.
+
+### Example
+
+```python
+convert_file_to_turtle(
+    input_path="data/people.xlsx",
+    config=my_rdf_config,
+    output_path="output/people.ttl",
+    index_col="person_id"
+)
+```
+
+If `index_col` is not specified, the function will use the default DataFrame index.
