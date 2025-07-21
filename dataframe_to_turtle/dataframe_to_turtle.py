@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     """
@@ -121,3 +122,40 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         lines.append("")  # Separate subjects with a blank line
 
     return "\n".join(lines)
+
+def convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_col: str = None) -> None:
+    """
+    Reads a CSV or Excel file, converts it to RDF Turtle format using the provided configuration,
+    and writes the result to a .ttl file.
+
+    Parameters:
+        input_path (str): 
+            Path to the input tabular file (.csv, .xls, or .xlsx).
+        config (dict): 
+            RDF mapping configuration compatible with convert_dataframe_to_turtle.
+        output_path (str): 
+            Path to the output .ttl file.
+        index_col (str, optional): 
+            Name or index of the column to use as the DataFrame index (subject ID). 
+            If None, the default index will be used.
+
+    Raises:
+        ValueError: If the file extension is unsupported.
+        FileNotFoundError: If the input file does not exist.
+    """
+    ext = os.path.splitext(input_path)[1].lower()
+
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file not found: {input_path}")
+
+    if ext == ".csv":
+        df = pd.read_csv(input_path, index_col=index_col)
+    elif ext in [".xls", ".xlsx"]:
+        df = pd.read_excel(input_path, index_col=index_col)
+    else:
+        raise ValueError(f"Unsupported file extension: {ext}")
+
+    turtle_str = convert_dataframe_to_turtle(df, config)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(turtle_str)
