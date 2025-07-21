@@ -1,125 +1,94 @@
 import pandas as pd
 import os
 
+import pandas as pd
+
 def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     """
-    Converts a pandas DataFrame into a Turtle (TTL) serialization string for RDF data.
-
-    Each row in the DataFrame is treated as an RDF subject, with the column values mapped
-    to predicates and objects based on the provided configuration. The function supports
-    custom prefixes, datatype declarations, language tags, and object relations.
-
+    Converts a pandas DataFrame into RDF Turtle format using a human-readable config structure.
+    
     Parameters:
-        dataframe (pd.DataFrame): 
-            A DataFrame where each row represents an RDF subject and each column represents 
-            a potential predicate. The DataFrame index will be used to construct subject URIs.
-
-        config (dict): 
-            A dictionary specifying the RDF mapping configuration with the following keys:
-            
-            - "prefixes" (dict): 
-                Maps prefix labels to full URI namespaces. Used to declare `@prefix` headers.
-            - "subject_prefix" (str): 
-                The prefix to be used when constructing subject URIs.
-            - "subject_classes" (list of str): 
-                RDF classes to assign to each subject using `a`.
-            - "predicate_maps" (dict): 
-                Maps DataFrame column names to RDF predicates.
-            - "language_tags" (optional dict): 
-                Maps column names to language tags (e.g., "en") for literal values.
-            - "data_types" (optional dict): 
-                Maps column names to datatype URIs (e.g., "xsd:integer").
-            - "relations" (optional list): 
-                Column names to treat as object references (not quoted literals).
+        dataframe (pd.DataFrame): The input DataFrame to serialize.
+        config (dict): The RDF mapping configuration with the following structure:
+            {
+                "prefixes": { "prefix": "uri", ... },
+                "subjects": {
+                    "uri_prefix": "prefix",
+                    "classes": ["class1", "class2"]
+                },
+                "mappings": [
+                    {
+                        "column": "colname",
+                        "predicate": "prefix:property",
+                        "language": "en",        # optional
+                        "datatype": "xsd:type",  # optional
+                        "type": "relation"       # optional ("relation" = treat value as URI)
+                    },
+                    ...
+                ]
+            }
 
     Returns:
-        str: 
-            A string containing the Turtle serialization of the input DataFrame based on the
-            given configuration.
-
-    Example:
-        >>> data = {"name": ["Alice"], "age": [30], "knows": ["foaf:Bob"]}
-        >>> df = pd.DataFrame(data, index=["Alice"])
-        >>> config = {
-        ...     "prefixes": {"foaf": "http://xmlns.com/foaf/0.1/", "xsd": "http://www.w3.org/2001/XMLSchema#"},
-        ...     "subject_prefix": "foaf",
-        ...     "subject_classes": ["foaf:Person"],
-        ...     "predicate_maps": {"name": "foaf:name", "age": "foaf:age", "knows": "foaf:knows"},
-        ...     "language_tags": {"name": "en"},
-        ...     "data_types": {"age": "xsd:integer"},
-        ...     "relations": ["knows"]
-        ... }
-        >>> convert_dataframe_to_turtle(df, config)
-        '@prefix foaf: <http://xmlns.com/foaf/0.1/> .\\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\\n...'
-
-    Notes:
-        - Columns not specified in `predicate_maps` are ignored.
-        - Missing (NaN) values in the DataFrame are skipped.
-        - The function assumes all subject identifiers are unique (i.e., row indices are unique).
+        str: RDF Turtle serialization of the DataFrame.
     """
-
-    # Extract parameters from config
     prefixes = config["prefixes"]
-    subject_prefix = config["subject_prefix"]
-    subject_classes = config["subject_classes"]
-    predicate_maps = config["predicate_maps"]
-    language_tags = config.get("language_tags", {})
-    data_types = config.get("data_types", {})
-    relations = set(config.get("relations", []))
+    subject_prefix = config["subjects"]["uri_prefix"]
+    subject_classes = config["subjects"]["classes"]
+    mappings_list = config["mappings"]
+
+    # Pre-index column mappings for fast access
+    mapping_index = {m["column"]: m for m in mappings_list}
 
     lines = []
 
-    # Write prefix declarations
+    # Write prefixes
     for prefix, uri in prefixes.items():
         lines.append(f"@prefix {prefix}: <{uri}> .")
-    lines.append("")  # Empty line after prefixes
+    lines.append("")  # Blank line
 
-    # Iterate through each row (subject)
     for subject_id, row in dataframe.iterrows():
         subject_uri = f"{subject_prefix}:{subject_id}"
         lines.append(f"{subject_uri} a {', '.join(subject_classes)} ;")
 
-        column_names = list(dataframe.columns)
         predicate_lines = []
 
-        for column_index, column_name in enumerate(column_names):
-            if column_name not in predicate_maps:
+        for column_name in dataframe.columns:
+            if column_name not in mapping_index:
                 continue
 
-            predicate = predicate_maps[column_name]
+            mapping = mapping_index[column_name]
+            predicate = mapping["predicate"]
             value = row[column_name]
-            if isinstance(value, (str)):
-                value = value.replace('"', '\\"')
 
             if pd.isna(value):
-                continue  # Skip missing values
+                continue
 
-            # Format the object
-            if column_name in relations:
-                object_str = value.replace(' ', '')
-            elif column_name in language_tags:
-                lang = language_tags[column_name]
+            # Format object
+            if mapping.get("type") == "relation":
+                object_str = str(value).replace('"', '\\"')
+            elif "language" in mapping:
+                lang = mapping["language"]
                 object_str = f"\"{value}\"@{lang}"
-            elif column_name in data_types:
-                datatype = data_types[column_name]
-                object_str = f"\"{value}\"^^{datatype}"
-            else:
-                if isinstance(value, (int, float)):
-                    object_str = f"{value}"
+            elif "datatype" in mapping:
+                dt = mapping["datatype"]
+                if dt == "xsd:integer" and isinstance(value, (int, float)):
+                    object_str = str(int(value))
                 else:
-                    object_str = f"\"{value}\""
+                    object_str = f"\"{value}\"^^{dt}"
+            else:
+                object_str = f"\"{value}\""
 
             predicate_lines.append(f"    {predicate} {object_str}")
 
-        # Write predicates with semicolon, end last with dot
-        for i, line in enumerate(predicate_lines):
+        # End statement: last predicate with dot
+        for i, triple in enumerate(predicate_lines):
             end = " ." if i == len(predicate_lines) - 1 else " ;"
-            lines.append(line + end)
+            lines.append(triple + end)
 
         if not predicate_lines:
-            lines[-1] = lines[-1][:-1] + " ."  # Change trailing ";" to "."
+            lines[-1] = lines[-1][:-1] + " ."  # Fix trailing semicolon if no predicates
 
-        lines.append("")  # Separate subjects with a blank line
+        lines.append("")  # Blank line between subjects
 
     return "\n".join(lines)
 
