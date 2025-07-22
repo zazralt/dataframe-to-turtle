@@ -2,15 +2,6 @@
 
 **dataframe-to-turtle** is a lightweight Python utility for converting `pandas.DataFrame` objects into [RDF](https://www.w3.org/RDF/) serialized in [Turtle](https://www.w3.org/TR/turtle/) format. It allows you to define custom mappings for prefixes, RDF classes, predicates, datatypes, language tags, and object relations—enabling seamless transformation of tabular data into Linked Data.
 
-## Features
-
-- Convert DataFrames into RDF Turtle serialization
-- Supports RDF class and predicate mapping
-- Handles language-tagged literals
-- Supports explicit datatype annotations (e.g., `xsd:integer`)
-- Generates semantic object references for relations
-- Configurable prefix declarations
-
 ---
 
 ## Installation
@@ -93,41 +84,24 @@ ex:Bob a foaf:Person ;
 
 ---
 
-## Configuration Reference
-
-| Key               | Type              | Description                                           |
-| ----------------- | ----------------- | ----------------------------------------------------- |
-| `prefixes`        | `dict`            | Mapping of prefix labels to URIs                      |
-| `subject_prefix`  | `str`             | Prefix to use for subject URIs                        |
-| `subject_classes` | `list[str]`       | RDF classes for each subject                          |
-| `predicate_maps`  | `dict`            | Maps DataFrame columns to RDF predicates              |
-| `language_tags`   | `dict` (optional) | Assigns language tags to literal values               |
-| `data_types`      | `dict` (optional) | Explicit datatype URIs for column values              |
-| `relations`       | `list` (optional) | Columns treated as URI references instead of literals |
-
-
-Here is a short `README.md` add-on section describing the `convert_file_to_turtle` function and how to use it:
-
----
-
-## Converting CSV or Excel Files to Turtle
+# Converting CSV or Excel Files to Turtle
 
 You can use the `convert_file_to_turtle` function to read tabular data from a CSV or Excel file, convert it to RDF Turtle, and write the result to a `.ttl` file.
 
-### Function Signature
+## Function Signature
 
 ```python
 convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_col: str = None) -> None
 ````
 
-### Parameters
+## Parameters
 
 * **`input_path`**: Path to the source `.csv`, `.xls`, or `.xlsx` file.
 * **`config`**: RDF mapping configuration (same structure as for `convert_dataframe_to_turtle`).
 * **`output_path`**: Destination file path for Turtle output.
 * **`index_col`** *(optional)*: Name or integer index of the column to use as the RDF subject identifier.
 
-### Example
+## Example
 
 ```python
 from dataframe_to_turtle import convert_dataframe_to_turtle, convert_file_to_turtle
