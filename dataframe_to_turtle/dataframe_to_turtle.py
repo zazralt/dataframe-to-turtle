@@ -49,7 +49,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     if subject_index:
         if subject_index not in dataframe.columns:
             raise ValueError(f"Index column '{subject_index}' not found in dataframe.")
-        df.index = df[subject_index]
+        dataframe.index = dataframe[subject_index]
     
     lines = []
 
