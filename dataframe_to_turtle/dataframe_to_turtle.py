@@ -13,16 +13,17 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
             {
                 "prefixes": { "prefix": "uri", ... },
                 "subjects": {
+                    "column": "index_column_name",  # optional, if not provided, the index will be used
                     "prefix": "prefix",
-                    "classes": ["prfx:class1", "prfx:class2"]
+                    "classes": ["prefix1:class1", "prefix2:class2"]
                 },
                 "mappings": [
                     {
                         "column": "column_name",
-                        "predicate": "prfx:property1",
+                        "predicate": "prefix1:property1",
                         "language": "en",         # optional
                         "data_type": "xsd:type",  # optional
-                        "prefix": "prefix"        # optional (prefix for object_uri)
+                        "prefix": "object_prefix" # optional
                     },
                     ...
                 ]
@@ -32,6 +33,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         str: RDF Turtle serialization of the DataFrame.
     """
     prefixes = config["prefixes"]
+    subject_index = config["subjects"]["column"]
     subject_prefix = config["subjects"]["prefix"]
     subject_classes = config["subjects"]["classes"]
     mappings_list = config["mappings"]
@@ -43,6 +45,12 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     if missing:
         print(f"Warning: the following columns in config were not found in the DataFrame: {missing}")
 
+    # Set index from a column
+    if subject_index:
+        if subject_index not in df.columns:
+            raise ValueError(f"Index column '{subject_index}' not found in dataframe.")
+        df.index = df[subject_index]    
+    
     lines = []
 
     # Write prefixes
@@ -95,7 +103,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
 
     return "\n".join(lines)
 
-def convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_col: str = None) -> None:
+def convert_file_to_turtle(input_path: str, config: dict, output_path: str) -> None:
     """
     Reads a CSV or Excel file, converts it to RDF Turtle format using the provided configuration,
     and writes the result to a .ttl file.
@@ -126,11 +134,6 @@ def convert_file_to_turtle(input_path: str, config: dict, output_path: str, inde
         df = pd.read_excel(input_path)
     else:
         raise ValueError(f"Unsupported file extension: {ext}")
-
-    if index_col:
-        if index_col not in df.columns:
-            raise ValueError(f"Index column '{index_col}' not found in input file.")
-        df.index = df[index_col]
 
     turtle_str = convert_dataframe_to_turtle(df, config)
 
