@@ -137,3 +137,49 @@ def convert_file_to_turtle(input_path: str, config: dict, output_path: str) -> N
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(turtle_str)
+
+def add_prefixes_to_config(config, base_uri="http://example.com", separator="-"):
+    """
+    Extracts all prefixes from the config and adds a 'prefixes' section with ontology and class URIs.
+    
+    Args:
+        config (dict): The configuration dictionary to be modified.
+        base_uri (str): The base URI for all ontology prefixes.
+
+    Returns:
+        dict: The updated config with a 'prefixes' section.
+    """
+    prefixes = {}
+
+    def handle_prefixed_term(term):
+        term = term.replace(':', separator)
+        if not isinstance(term, str) or separator not in term:
+            return
+        ontology, cls = term.split(separator, 1)
+
+        # Add ontology-level prefix
+        if ontology not in prefixes:
+            prefixes[ontology] = f"{base_uri}/{ontology}/"
+
+        # Add class-level prefix (concatenated key)
+        class_key = f"{ontology}{separator}{cls}"
+        if class_key not in prefixes:
+            prefixes[class_key] = f"{base_uri}/{ontology}/{cls}/"
+
+    # Handle subjects
+    subject = config.get("subjects", {})
+    if "prefix" in subject:
+        handle_prefixed_term(subject["prefix"])
+    for cls in subject.get("classes", []):
+        handle_prefixed_term(cls)
+
+    # Handle mappings
+    for mapping in config.get("mappings", []):
+        if "predicate" in mapping:
+            handle_prefixed_term(mapping["predicate"])
+        if "prefix" in mapping:
+            handle_prefixed_term(mapping["prefix"])
+
+    # Inject into config
+    config["prefixes"] = prefixes
+    return config
