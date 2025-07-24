@@ -21,9 +21,9 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                     {
                         "column": "column_name",
                         "predicate": "prefix1:property1",
+                        "prefix": "object_prefix" # mandatory for relations
                         "language": "en",         # optional
                         "data_type": "xsd:type",  # optional
-                        "prefix": "object_prefix" # optional
                     },
                     ...
                 ]
@@ -45,11 +45,11 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     if missing:
         print(f"Warning: the following columns in config were not found in the DataFrame: {missing}")
 
-    # Set index from a column
+    # Set index from a column and leave column in df
     if subject_index:
         if subject_index not in df.columns:
             raise ValueError(f"Index column '{subject_index}' not found in dataframe.")
-        df.index = df[subject_index]    
+        df.index = df[subject_index]
     
     lines = []
 
@@ -58,15 +58,16 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         lines.append(f"@prefix {prefix}: <{uri}> .")
     lines.append("")  # Blank line
 
+    # Write triples
     for subject_id, row in dataframe.iterrows():
-        subject_uri = f"{subject_prefix}:{subject_id}"
-        lines.append(f"{subject_uri} a {', '.join(subject_classes)} ;")
+        subject_str = f"{subject_prefix}:{subject_id}"
+        lines.append(f"{subject_str} a {', '.join(subject_classes)} ;")
 
         predicate_lines = []
 
         for column_name in valid_column_names:
             mapping = mapping_index[column_name]
-            predicate = mapping["predicate"]
+            predicate_str = mapping["predicate"]
             value = row[column_name]
 
             if pd.isna(value):
@@ -78,8 +79,8 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 object_id = str(value).replace(' ', '')
                 object_str = f"{object_prefix}:{object_id}"
             elif "language" in mapping:
-                lang = mapping["language"]
-                object_str = f"\"{value}\"@{lang}"
+                language_tag = mapping["language"]
+                object_str = f"\"{value}\"@{language_tag}"
             elif "data_type" in mapping:
                 dt = mapping["data_type"]
                 object_str = f"\"{value}\"^^{dt}"
@@ -89,7 +90,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
                 else:
                     object_str = f"\"{value.replace('"', '\\"')}\""
 
-            predicate_lines.append(f"    {predicate} {object_str}")
+            predicate_lines.append(f"    {predicate_str} {object_str}")
 
         # End statement: last predicate with dot
         for i, triple in enumerate(predicate_lines):
