@@ -115,9 +115,6 @@ def convert_file_to_turtle(input_path: str, config: dict, output_path: str) -> N
             RDF mapping configuration compatible with convert_dataframe_to_turtle.
         output_path (str): 
             Path to the output .ttl file.
-        index_col (str, optional): 
-            Name or index of the column to use as the DataFrame index (subject ID). 
-            If None, the default index will be used.
 
     Raises:
         ValueError: If the file extension is unsupported.
