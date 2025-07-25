@@ -12,7 +12,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         config (dict): The RDF mapping configuration with the following structure:
             {
                 "prefixes": { "prefix": "uri", ... },
-                "subjects": {
+                "subject": {
                     "column": "index_column_name",  # optional, if not provided, the index will be used
                     "prefix": "prefix",
                     "classes": ["prefix1:class1", "prefix2:class2"]
@@ -33,9 +33,9 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         str: RDF Turtle serialization of the DataFrame.
     """
     prefixes = config["prefixes"]
-    subject_index = config["subjects"]["column"]
-    subject_prefix = config["subjects"]["prefix"]
-    subject_classes = config["subjects"]["classes"]
+    subject_index = config["subject"]["column"]
+    subject_prefix = config["subject"]["prefix"]
+    subject_classes = config["subject"]["classes"]
     mappings_list = config["mappings"]
 
     # Pre-index column mappings for fast access
@@ -138,7 +138,7 @@ def convert_file_to_turtle(input_path: str, config: dict, output_path: str) -> N
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(turtle_str)
 
-def add_prefixes_to_config(config, base_uri="http://example.com", separator="-"):
+def add_prefixes_to_config(config, ontology_base_uri="http://example.com/ontology", class_base_uri="http://example.com/data", separator="-"):
     """
     Extracts all prefixes from the config and adds a 'prefixes' section with ontology and class URIs.
     
@@ -159,15 +159,15 @@ def add_prefixes_to_config(config, base_uri="http://example.com", separator="-")
 
         # Add ontology-level prefix
         if ontology not in prefixes:
-            prefixes[ontology] = f"{base_uri}/{ontology}/"
+            prefixes[ontology] = f"{ontology_base_uri}/{ontology}/"
 
         # Add class-level prefix (concatenated key)
         class_key = f"{ontology}{separator}{cls}"
         if class_key not in prefixes:
-            prefixes[class_key] = f"{base_uri}/{ontology}/{cls}/"
+            prefixes[class_key] = f"{class_base_uri}/{ontology}/{cls}/"
 
     # Handle subjects
-    subject = config.get("subjects", {})
+    subject = config.get("subject", {})
     if "prefix" in subject:
         handle_prefixed_term(subject["prefix"])
     for cls in subject.get("classes", []):
