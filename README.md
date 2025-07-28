@@ -36,6 +36,7 @@ config = {
     },
     "subject": {
         "prefix": "ex",
+        "column": "name",
         "classes": ["foaf:Person"]
     },
     "mappings": [
@@ -99,7 +100,6 @@ convert_file_to_turtle(input_path: str, config: dict, output_path: str, index_co
 * **`input_path`**: Path to the source `.csv`, `.xls`, or `.xlsx` file.
 * **`config`**: RDF mapping configuration (same structure as for `convert_dataframe_to_turtle`).
 * **`output_path`**: Destination file path for Turtle output.
-* **`index_col`** *(optional)*: Name or integer index of the column to use as the RDF subject identifier.
 
 ## Example
 
@@ -110,7 +110,6 @@ convert_file_to_turtle(
     input_path="data/people.xlsx",
     config=my_rdf_config,
     output_path="output/people.ttl",
-    index_col="person_id"
 )
 ```
 
