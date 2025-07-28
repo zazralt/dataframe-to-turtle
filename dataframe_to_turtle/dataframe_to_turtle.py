@@ -1,8 +1,6 @@
 import pandas as pd
 import os
 
-import pandas as pd
-
 def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     """
     Converts a pandas DataFrame into RDF Turtle format using a human-readable config structure.
