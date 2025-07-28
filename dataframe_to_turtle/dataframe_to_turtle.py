@@ -30,6 +30,9 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     Returns:
         str: RDF Turtle serialization of the DataFrame.
     """
+    if dataframe.empty:
+        raise ValueError("Input DataFrame is empty.")
+
     prefixes = config["prefixes"]
     subject_index = config["subject"]["column"]
     subject_prefix = config["subject"]["prefix"]
