@@ -34,7 +34,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         raise ValueError("Input DataFrame is empty.")
 
     prefixes = config["prefixes"]
-    subject_index = config["subject"]["column"]
+    subject_index = config["subject"].get("column", None)
     subject_prefix = config["subject"]["prefix"]
     subject_classes = config["subject"]["classes"]
     mappings_list = config["mappings"]
