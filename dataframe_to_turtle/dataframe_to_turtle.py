@@ -11,7 +11,7 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
             {
                 "prefixes": { "prefix": "uri", ... },
                 "subject": {
-                    "column": "index_column_name",  # optional, if not provided, the index will be used
+                    "column": "index_column_name",  # mandatory for instances
                     "prefix": "prefix",
                     "classes": ["prefix1:class1", "prefix2:class2"]
                 },
