@@ -34,7 +34,7 @@ config = {
         "schema": "http://schema.org/",
         "xsd": "http://www.w3.org/2001/XMLSchema#"
     },
-    "subjects": {
+    "subject": {
         "prefix": "ex",
         "classes": ["foaf:Person"]
     },
