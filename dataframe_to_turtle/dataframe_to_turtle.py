@@ -11,9 +11,9 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
             {
                 "prefixes": { "prefix": "uri", ... },
                 "subject": {
-                    "column": "column",  # mandatory for instances
+                    "column": "column",          # optional
                     "prefix": "prefix",
-                    "classes": ["prefix:class"]
+                    "classes": ["prefix:class"]  # optional
                 },
                 "mappings": [
                     {
@@ -30,13 +30,17 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     Returns:
         str: RDF Turtle serialization of the DataFrame.
     """
+
     if dataframe.empty:
-        raise ValueError("Input DataFrame is empty.")
+        raise ValueError("Input dataframe is empty.")
+
+    if config == {}:
+        raise ValueError("Input config dictionary is empty.")
 
     prefixes = config["prefixes"]
     subject_index = config["subject"].get("column", None)
     subject_prefix = config["subject"]["prefix"]
-    subject_classes = config["subject"]["classes"]
+    subject_classes = config["subject"].get("classes", None)
     mappings_list = config["mappings"]
 
     # Pre-index column mappings for fast access
@@ -51,6 +55,8 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
         if subject_index not in dataframe.columns:
             raise ValueError(f"Index column '{subject_index}' not found in dataframe.")
         dataframe.index = dataframe[subject_index]
+    else:
+        print("Attention: Using default index from dataframe")
     
     lines = []
 
@@ -62,8 +68,11 @@ def convert_dataframe_to_turtle(dataframe: pd.DataFrame, config: dict) -> str:
     # Write triples
     for subject_id, row in dataframe.iterrows():
         subject_str = f"{subject_prefix}:{subject_id}"
-        lines.append(f"{subject_str} a {', '.join(subject_classes)} ;")
-
+        if subject_classes:
+            lines.append(f"{subject_str} a {', '.join(subject_classes)} ;")
+        else:
+            lines.append(f"{subject_str}")
+            
         predicate_lines = []
 
         for column_name in valid_column_names:
@@ -150,7 +159,11 @@ def add_prefixes_to_config(config, ontology_base_uri="http://example.com/ontolog
     Returns:
         dict: The updated config with a 'prefixes' section.
     """
-    prefixes = {}
+    
+    if "prefixes" in config.keys():
+        prefixes = config["prefixes"]
+    else:
+        prefixes = {}
 
     def handle_prefixed_term(term):
         term = term.replace(':', separator)
@@ -162,9 +175,9 @@ def add_prefixes_to_config(config, ontology_base_uri="http://example.com/ontolog
         if ontology not in prefixes:
             prefixes[ontology] = f"{ontology_base_uri}/{ontology}/"
 
-        # Add class-level prefix (concatenated key)
+        # Add class-level prefix (concatenated key), note: classes are in PascalCase
         class_key = f"{ontology}{separator}{cls}"
-        if class_key not in prefixes:
+        if class_key not in prefixes and cls[0].isupper():
             prefixes[class_key] = f"{class_base_uri}/{ontology}/{cls}/"
 
     # Handle subjects
