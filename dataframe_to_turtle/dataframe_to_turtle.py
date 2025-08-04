@@ -136,10 +136,12 @@ def convert_file_to_turtle(input_path: str, config: dict, output_path: str) -> N
     if not os.path.exists(input_path):
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
+    columns = [config["subject"]["column"]] + [m["column"] for m in config["mappings"]]
+    
     if ext == ".csv":
-        df = pd.read_csv(input_path)
+        df = pd.read_csv(input_path, usecols=columns)
     elif ext in [".xls", ".xlsx"]:
-        df = pd.read_excel(input_path)
+        df = pd.read_excel(input_path, usecols=columns)
     else:
         raise ValueError(f"Unsupported file extension: {ext}")
 
